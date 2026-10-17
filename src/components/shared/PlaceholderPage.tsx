@@ -1,10 +1,18 @@
+import { useMemo } from "react";
 import { ArrowLeft, Boxes } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { getPageTitle } from "@/app/config/navigation";
+import { useMenuItems } from "@/features/menu/hooks/use-menu-items";
+import {
+  buildMenuTree,
+  getMenuPageTitle,
+} from "@/features/menu/utils/menu-utils";
 
 export default function PlaceholderPage() {
   const { pathname } = useLocation();
-  const pageTitle = getPageTitle(pathname);
+  const { data: menuItems = [] } = useMenuItems();
+
+  const menuTree = useMemo(() => buildMenuTree(menuItems), [menuItems]);
+  const pageTitle = getMenuPageTitle(menuTree, pathname);
 
   return (
     <section className="rounded-xl border border-border bg-card px-6 py-16 text-center sm:py-20">

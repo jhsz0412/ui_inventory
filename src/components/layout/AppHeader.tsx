@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Bell, ChevronDown, LogOut, Menu, Search } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getPageTitle } from "@/app/config/navigation";
+import { useMenuItems } from "@/features/menu/hooks/use-menu-items";
+import {
+  buildMenuTree,
+  getMenuPageTitle,
+} from "@/features/menu/utils/menu-utils";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 
 type AppHeaderProps = {
@@ -12,26 +16,28 @@ export default function AppHeader({ onMenuClick }: AppHeaderProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const pageTitle = getPageTitle(pathname);
+
+  const { data: menuItems = [] } = useMenuItems();
+
+  const menuTree = useMemo(() => buildMenuTree(menuItems), [menuItems]);
+  const pageTitle = getMenuPageTitle(menuTree, pathname);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [logoutError, setLogoutError] = useState("");
 
   async function handleLogout() {
     if (isLoggingOut) return;
 
     setIsLoggingOut(true);
-    setLogoutError("");
 
     try {
       await logout();
-      navigate("/login", { replace: true });
     } catch {
-      navigate("/login", { replace: true });
+      // Continue to the login screen even if the logout request fails.
     } finally {
       setIsLoggingOut(false);
       setIsProfileOpen(false);
+      navigate("/login", { replace: true });
     }
   }
 
@@ -147,12 +153,6 @@ export default function AppHeader({ onMenuClick }: AppHeaderProps) {
           )}
         </div>
       </div>
-
-      {logoutError && (
-        <p role="alert" className="sr-only">
-          {logoutError}
-        </p>
-      )}
     </header>
   );
 }
