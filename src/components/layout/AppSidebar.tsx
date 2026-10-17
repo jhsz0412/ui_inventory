@@ -83,19 +83,23 @@ export default function AppSidebar({ open, onClose }: AppSidebarProps) {
     const isExpanded = expandedIds.has(item.id);
     const branchActive = isBranchActive(item);
 
-    const linkClassName = (isActive: boolean) =>
-      `flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-        isActive || (!item.route && branchActive)
-          ? "bg-primary font-medium text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      }`;
+    const linkClassName = (isActive: boolean) => {
+      if (isActive) {
+        // The currently selected menu item.
+        return "flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition-colors";
+      }
+
+      if (!item.route && branchActive) {
+        // Parent menu with active child.
+        return "flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-foreground transition-colors";
+      }
+
+      return "flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
+    };
 
     return (
       <div key={item.id}>
-        <div
-          className="flex items-center gap-1"
-          style={{ paddingLeft: depth > 0 ? 12 : 0 }}
-        >
+        <div className="flex items-center gap-1">
           {item.route ? (
             <NavLink
               to={item.route}
@@ -153,7 +157,7 @@ export default function AppSidebar({ open, onClose }: AppSidebarProps) {
         </div>
 
         {hasChildren && isExpanded && (
-          <div className="ml-5 mt-1 space-y-1 border-l border-border pl-2">
+          <div className="mt-1 space-y-1">
             {item.children.map((child) => renderMenuItem(child, depth + 1))}
           </div>
         )}
