@@ -5,6 +5,7 @@ import DashboardPage from "@/features/dashboard/pages/DashboardPage";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import ProtectedRoute from "@/app/router/ProtectedRoute";
 import InventoryItemsPage from "@/features/inventory/pages/InventoryItemsPage";
+import MenuItemsPage from "@/features/menu/pages/MenuItemsPage";
 
 export default function AppRouter() {
   return (
@@ -15,7 +16,7 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index element={<DashboardPage />} />
-
+            <Route path="dashboard" element={<DashboardPage />} />
             <Route path="inventory/items" element={<InventoryItemsPage />} />
             <Route path="inventory/categories" element={<PlaceholderPage />} />
             <Route path="inventory/warehouses" element={<PlaceholderPage />} />
@@ -27,6 +28,7 @@ export default function AppRouter() {
             <Route path="requisitions" element={<PlaceholderPage />} />
             <Route path="deliveries" element={<PlaceholderPage />} />
             <Route path="reports" element={<PlaceholderPage />} />
+            <Route path="settings/menu-items" element={<MenuItemsPage />} />
             <Route path="settings" element={<PlaceholderPage />} />
 
             <Route path="*" element={<PlaceholderPage />} />
